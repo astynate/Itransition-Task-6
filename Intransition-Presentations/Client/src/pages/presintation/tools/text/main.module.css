@@ -1,0 +1,45 @@
+.textField {
+    height: fit-content;
+    width: fit-content;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: move;
+    display: inline-block;
+}
+
+.textField[state="active"] {
+    border: 2px solid var(--main-blue-color);
+}
+
+.textField span {
+    resize: none;
+    outline: none;
+    border: none;
+    height: 100%;
+    width: 300px;
+    max-width: 300px;
+    text-wrap: balance;
+    font-family: 'Open Sans', sans-serif;
+    cursor: move;
+    user-select: none;
+}
+
+.textField span[state="edit"] {
+    cursor: text;
+    user-select: auto;
+}
+
+.resizeBox {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    outline-offset: -2px;
+    outline: 2px solid var(--main-blue-color);
+    background: white;
+}
+
+.resizeBox:nth-child(1) { top: -6px; left: -6px; cursor: nwse-resize; }
+.resizeBox:nth-child(2) { bottom: -6px; left: -6px; cursor: ne-resize; }
+.resizeBox:nth-child(3) { top: -6px; right: -6px; cursor: ne-resize; }
+.resizeBox:nth-child(4) { bottom: -6px; right: -6px; cursor: nwse-resize; }

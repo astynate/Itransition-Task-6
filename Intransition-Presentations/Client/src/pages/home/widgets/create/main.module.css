@@ -1,0 +1,8 @@
+.createWrapper {
+    height: auto;
+    width: 100%;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background: var(--main-accent-color);
+    border-bottom: 1px solid var(--main-border-color);
+}

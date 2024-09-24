@@ -1,0 +1,15 @@
+.avatar {
+    height: 33px;
+    width: 33px;
+    background: #D3DAFF;
+    color: #0029FF;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar[color="color-1"] { background: #F3FFD3; color: #DBFF00; }
+.avatar[color="color-2"] { background: #FFD3D3; color: #FF0000; }

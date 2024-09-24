@@ -1,0 +1,82 @@
+.wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9;
+}
+
+.login {
+    padding: 22px 22px;
+    background: var(--main-accent-color);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    grid-gap: 10px;
+}
+
+.login input {
+    outline: none;
+    border: none;
+    width: 390px;
+    background: none;
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+    border-bottom: 2px solid var(--main-border-color);
+    padding: 12px 0px;
+    transition: 0.15s ease;
+}
+
+.login input:focus {
+    border-bottom: 2px solid var(--main-blue-color);
+}
+
+.login button {
+    margin-left: auto;
+    width: fit-content;
+    padding: 9px 30px;
+    background: var(--main-blue-color);
+    outline: none;
+    border: none;
+    font-size: 16px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.colors {
+    display: flex;
+    grid-gap: 10px;
+    margin-top: 5px;
+}
+
+.color {
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    cursor: pointer;
+    border: 1px solid var(--main-border-color);
+}
+
+.color[id="active"] { 
+    outline-offset: -3px;
+    outline: 3px solid var(--main-blue-color);
+}
+
+.color:nth-child(1) { background: #D3DAFF; }
+.color:nth-child(2) { background: #F3FFD3; }
+.color:nth-child(3) { background: #FFD3D3; }
+
+.title {
+    margin: 0;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 600;
+}

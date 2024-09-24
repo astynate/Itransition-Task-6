@@ -1,0 +1,31 @@
+.slideWrapper {
+    height: auto;
+    width: 100%;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 16px auto;
+    font-size: 16px;
+    font-weight: 600;
+    grid-gap: 10px;
+}
+
+.sheet {
+    height: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: white;
+}
+
+.sheet:hover {
+    outline-offset: 2px;
+    outline: 2px solid var(--main-blue-color);
+}
+
+.slideWrapper[state="current"] .sheet {
+    outline-offset: 0px;
+    outline: 4px solid var(--main-blue-color);
+}
+
+.slideWrapper[state="current"] {
+    color: var(--main-blue-color);
+}

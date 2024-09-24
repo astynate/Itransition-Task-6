@@ -1,0 +1,43 @@
+.headerWrapper {
+    height: 60px;
+    width: 100%;
+    border-bottom: 1px solid var(--main-border-color);
+    display: flex;
+    user-select: none;
+    position: sticky;
+    justify-content: space-between;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    background: var(--main-background-color);
+    align-items: center;
+}
+
+.header {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.left, .left h1 {
+    display: flex;
+    margin: 0;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 700;
+    grid-gap: 5px;
+    color: var(--main-font-color);
+}
+
+.logo {
+    height: 24px;
+    width: 24px;
+    object-fit: contain;
+}
+
+.product {
+    color: rgb(71, 96, 255);
+}

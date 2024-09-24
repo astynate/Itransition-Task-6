@@ -1,0 +1,9 @@
+.users {
+    display: flex;
+    align-items: center;
+    grid-gap: 7px;
+    background: var(--main-background-color);
+    padding: 5px;
+    border-radius: 30px;
+    border: 1px solid var(--main-border-color);
+}
