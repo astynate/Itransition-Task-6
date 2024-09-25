@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Instend.Server.Models
+namespace Itrantion.Server.Models
 {
     [Table("permissions")]
     public class PermissionModel
     {
         [Column("id")][Key] public Guid Id { get; set; } = Guid.NewGuid();
-        [Column("user_id")] public Guid UserId { get; set; }
+        [Column("username")] public string User { get; set; } = string.Empty;
         [Column("presentation_id")] public Guid PresentationId { get; set; }
-        [Column("Permission")] public Permissions Permission { get; set; } = Permissions.ReadAndEdit;
+        [Column("permission")] public string Permission { get; set; } = Permissions.ReadAndEdit.ToString();
     }
 }

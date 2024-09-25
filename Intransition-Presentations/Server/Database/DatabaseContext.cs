@@ -1,7 +1,7 @@
-﻿using Instend.Server.Models;
+﻿using Itrantion.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Instend.Server.Database
+namespace Itrantion.Server.Database
 {
     public class DatabaseContext : DbContext
     {

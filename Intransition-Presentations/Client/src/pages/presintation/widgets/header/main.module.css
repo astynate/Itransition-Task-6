@@ -22,3 +22,7 @@
     height: 100%;
     display: flex;
 }
+
+.users {
+    margin-right: 10px;
+}

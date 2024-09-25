@@ -1,5 +1,5 @@
 ﻿
-namespace Instend.Server.Models
+namespace Itrantion.Server.Models
 {
     public enum Permissions
     {

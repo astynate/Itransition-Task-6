@@ -1,9 +1,10 @@
 using Exider.Services.Middleware;
-using Exider_Version_2._0._0.Server.Hubs;
-using Instend.Server.Database;
 using Instend.Server.Database.Abstraction;
 using Instend.Server.Database.Realization;
-using Microsoft.AspNet.SignalR.Messaging;
+using Itrantion.Server.Database;
+using Itrantion.Server.Database.Abstraction;
+using Itrantion.Server.Database.Realization;
+using Itransition.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddCors(options =>
         .AllowCredentials());
 });
 
+builder.Services.AddScoped<ISlidesRepository, SlidesRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IPresentationsRepository, PresentationsRepository>();
 builder.Services.AddDbContext<DatabaseContext>();

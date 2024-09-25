@@ -5,3 +5,7 @@
     aspect-ratio: 16 / 9;
     background: white;
 }
+
+.sheet[tool="tool-2"] {
+    cursor: text;
+}

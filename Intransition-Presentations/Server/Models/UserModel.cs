@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Instend.Server.Models
+namespace Itrantion.Server.Models
 {
     [Table("users")]
     public class UserModel

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Instend.Server.Models
+namespace Itrantion.Server.Models
 {
     [Table("presentations")]
     public class PresentationModel
@@ -11,7 +11,7 @@ namespace Instend.Server.Models
         [Column] public string Owner { get; private set; } = string.Empty;
         [Column] public DateTime Date { get; private set; } = DateTime.Now;
 
-        [NotMapped] public UserModel[] connectedUser = [];
+        [NotMapped] public List<UserModel> connectedUsers = [];
 
         private PresentationModel() { }
 

@@ -1,6 +1,6 @@
-﻿using Instend.Server.Models;
+﻿using Itrantion.Server.Models;
 
-namespace Instend.Server.Database.Abstraction
+namespace Itrantion.Server.Database.Abstraction
 {
     public interface IUsersRepository
     {

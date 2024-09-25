@@ -1,7 +1,9 @@
 ﻿using Instend.Server.Database.Abstraction;
+using Itrantion.Server.Database.Abstraction;
+using Itrantion.Server.Services;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Exider_Version_2._0._0.Server.Hubs
+namespace Itransition.Server.Hubs
 {
     public class UserHub : Hub
     {
@@ -15,13 +17,40 @@ namespace Exider_Version_2._0._0.Server.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             await base.OnDisconnectedAsync(exception);
+            await Disconnect();
         }
 
-        //public async Task<object> Join(string username, string presentation)
-        //{
+        public async Task Disconnect()
+        {
+            var result = await _presentationsRepository.DeleteConnection(Context.ConnectionId);
 
+            if (result.username != null && result.username != null)
+            {
+                await Clients.Group(result.presentationId.ToString() ?? "").SendAsync("DisconnectUser", result.username);
+            }
+        }
 
-        //    //return await _presentationsRepository.GetModel();
-        //}
+        public async Task Join(string username, Guid presentationId)
+        {
+            var presentation = await _presentationsRepository.GetModel(presentationId);
+
+            if (presentation.Presentation == null)
+                return;
+
+            var result = await _presentationsRepository.RegisterNewConnection
+            (
+                username,
+                Context.ConnectionId, 
+                presentationId
+            );
+
+            if (result == null)
+                return;
+
+            presentation.Presentation.connectedUsers.Add(result);
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, presentationId.ToString());
+            await Clients.Group(presentationId.ToString()).SendAsync("JoinedPresentation", SerializationHelper.SerializeWithCamelCase(presentation));
+        }
     }
 }

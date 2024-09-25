@@ -1,7 +1,7 @@
-﻿using Instend.Server.Database.Abstraction;
+﻿using Itrantion.Server.Database.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Instend.Server.Controllers
+namespace Itrantion.Server.Controllers
 {
     [ApiController]
     [Route("/api/users")]

@@ -3,13 +3,10 @@ import styles from './main.module.css';
 import cursor from './images/cursor.png';
 import text from './images/text.png';
 import logo from './images/logo.png';
-import figure from './images/figure.png';
 import Users from '../../../home/features/users/Users';
 import { useState } from 'react';
 
-const Header = () => {
-    const [currentTool, setTool] = useState(0);
-
+const Header = ({name, users = [], currentTool, setTool}) => {
     return (
         <div className={styles.header}>
             <div className={styles.navigation}>
@@ -33,10 +30,10 @@ const Header = () => {
                 />
             </div>
             <div className={styles.name}>
-                <input defaultValue={"File name"} />
+                <input key={name} defaultValue={name ?? "Loading..."} />
             </div>
             <div className={styles.users}>
-                <Users />
+                <Users users={users} />
             </div>
         </div>
     );

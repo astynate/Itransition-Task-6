@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './main.module.css';
 
-const TextTool = ({text, setText}) => {
-    const [properties, setProperties] = useState({ width: 200, height: 100, top: 20, left: 20 });
+const TextTool = ({width, height, top, left, defaultText}) => {
+    const [text, setText] = useState(defaultText);
+    const [properties, setProperties] = useState({ width: width, height: height, top: top, left: left });
     const [defaultValue] = useState(text);
     const [isDragging, setIsDragging] = useState(false);
     const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });

@@ -1,8 +1,8 @@
-﻿using Instend.Server.Database.Abstraction;
-using Instend.Server.Models;
+﻿using Itrantion.Server.Database.Abstraction;
+using Itrantion.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Instend.Server.Database.Realization
+namespace Itrantion.Server.Database.Realization
 {
     public class UsersRepository : IUsersRepository
     {
