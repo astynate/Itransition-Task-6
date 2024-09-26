@@ -59,7 +59,15 @@ namespace Itrantion.Server.Database.Realization
         {
             public PresentationModel? Presentation { get; set; }
             public SlideModel[]? Slides { get; set; }
-            public TextModel[]? Texts { get; set; }
+        }
+
+        public static SlideModel SetSlideItems(SlideModel slide, DatabaseContext context)
+        {
+            slide.texts = context.Texts
+                .Where(text => text.SlideId == slide.Id)
+                .ToArray();
+
+            return slide;
         }
 
         public async Task<PresentationResult> GetModel(Guid id)
@@ -71,17 +79,13 @@ namespace Itrantion.Server.Database.Realization
                     Presentation = presentation,
                     Slides = _context.Slides
                         .Where(slide => slide.PresentationId == presentation.Id)
-                        .ToArray(),
-                    Texts = _context.Texts
-                        .Where(text => _context.Slides.Any(slide => slide.Id == text.SlideId && slide.PresentationId == presentation.Id))
+                        .Select(slide => SetSlideItems(slide, _context))
                         .ToArray()
                 })
                 .FirstOrDefaultAsync();
 
             if (result == null)
-            {
                 return new PresentationResult();
-            }
 
             result.Presentation.connectedUsers = await _context.Connections
                     .Where(x => x.Presentation == id)
@@ -94,7 +98,6 @@ namespace Itrantion.Server.Database.Realization
             return new PresentationResult() {
                 Presentation = result!.Presentation,
                 Slides = result.Slides,
-                Texts = result.Texts
             };
         }
 

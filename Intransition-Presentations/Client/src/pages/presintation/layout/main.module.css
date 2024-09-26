@@ -10,6 +10,11 @@
     width: 100%;
     display: grid;
     grid-template-columns: 300px auto;
+    transition: 0.4s ease;
+}
+
+.content[id="open"] {
+    height: calc(100% - 100px);
 }
 
 .left {
@@ -75,7 +80,7 @@
 .create {
     height: 100%;
     width: 100%;
-    border-top: 1px solid var(--main-border-color);
+    /* border-top: 1px solid var(--main-border-color); */
     display: flex;
     align-items: center;
     background: var(--main-accent-color);

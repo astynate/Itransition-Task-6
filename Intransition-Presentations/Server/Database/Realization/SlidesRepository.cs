@@ -74,5 +74,31 @@ namespace Instend.Server.Database.Realization
 
             return slideId;
         }
+
+        public async Task AddText(TextModel model)
+        {
+            await _context.Texts.AddAsync(model);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteText(Guid id)
+        {
+            await _context.Texts.Where(x => x.Id == id).ExecuteDeleteAsync();
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateText(TextModel model)
+        {
+            await _context.Texts
+                .Where(x => x.Id == model.Id)
+                .ExecuteUpdateAsync(x => x
+                    .SetProperty(x => x.Text, model.Text)
+                    .SetProperty(x => x.Top, model.Top)
+                    .SetProperty(x => x.Left, model.Left)
+                    .SetProperty(x => x.Height, model.Height)
+                    .SetProperty(x => x.Width, model.Width));
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

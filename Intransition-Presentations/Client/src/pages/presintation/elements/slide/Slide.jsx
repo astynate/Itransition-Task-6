@@ -11,7 +11,7 @@ const Slide = ({number = 1, isCurrent = false, onClick = () => {}}) => {
                 <span>{number}</span>
             </div>
             <div className={styles.sheet}>
-                
+
             </div>
         </div>
     )

@@ -13,5 +13,14 @@ namespace Itrantion.Server.Models
         [Column("left")] public int Left { get; set; }
         [Column("height")] public int Height { get; set; }
         [Column("width")] public int Width { get; set; }
+        [Column("font_family")] public string FontFamily { get; set; } = "Open Sans";
+        [Column("font_style")] public string FontStyle { get; set; } = "none";
+        [Column("text_align")] public string TextAlign { get; set; } = "left";
+        [Column("font_size")] public string FontSize { get; set; } = "10%";
+        [Column("text_decoration")] public string TextDecoration { get; set; } = "none";
+
+        [NotMapped] public Guid PresentationId { get; set; }
+
+        public TextModel() { }
     }
 }

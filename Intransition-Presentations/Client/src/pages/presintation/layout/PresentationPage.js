@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { createSignalRContext } from "react-signalr/signalr";
 import styles from './main.module.css';
@@ -8,26 +8,36 @@ import Slide from '../elements/slide/Slide';
 import add from './images/add.svg';
 import { observer } from 'mobx-react-lite';
 import userState from '../../../state/userState';
-import SlideAPI from './api/SlideAPI';
+import SlideAPI from '../api/SlideAPI';
 
 export const signalrContext = createSignalRContext();
 
 const PresentationPage = observer(() => {
     const [presentation, setPresentation] = useState({});
     const [slides, setSlides] = useState([]);
-    const [texts, setText] = useState([]);
     const [currentSlide, setCurrentSlide] = useState(-1);
     const [currentTool, setTool] = useState(0);
+    const [isToolBarOpen, setToolbarOpenState] = useState(false);
+    const headerRef = useRef();
+
+    const [textStyles, setTextStyles] = useState({
+        textAlign: 'center',
+        textDecoration: 'underline',
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        fontFamily: 'Open Sans',
+        fontSize: '10%'
+    });
+    
     let params = useParams();
 
     signalrContext.useSignalREffect(
         "JoinedPresentation",
         (data) => {
-            const { presentation, slides, text } = JSON.parse(data);
+            const { presentation, slides } = JSON.parse(data);
 
             setPresentation(presentation ?? {});
             setSlides(slides ?? []);
-            setText(text ?? []);
             setCurrentSlide(slides ? 0 : -1);
         }
     );
@@ -58,6 +68,57 @@ const PresentationPage = observer(() => {
             }
         }
     );
+
+    signalrContext.useSignalREffect(
+        "AddText",
+        (data) => {
+            const model = JSON.parse(data);
+            
+            setSlides(prev => {
+                return prev.map(slide => {
+                    if (slide.id === model.slideId) {
+                        slide.texts = [...slide.texts, model];
+                    }
+
+                    return slide;
+                })
+            });
+        }
+    );
+
+    signalrContext.useSignalREffect(
+        "DeleteText",
+        (data) => {
+            setSlides(prev => {
+                return prev.map(slide => {
+                    slide.texts = slide.texts.filter(e => e.id !== data);
+                    return slide;
+                })
+            });
+        }
+    );
+
+    signalrContext.useSignalREffect(
+        "UpdateText",
+        (data) => {
+            const model = JSON.parse(data);
+
+            setSlides(prevSlides => {
+                const result = prevSlides.map(slide => {
+                    slide.texts = slide.texts.map(textModel => {
+                        if (textModel.id === model.id) {
+                            return model;
+                        }
+                        return textModel;
+                    });
+
+                    return { ...slide };
+                });
+
+                return result;
+            });
+        }
+    );    
 
     signalrContext.useSignalREffect(
         "DeleteSlide",
@@ -100,21 +161,21 @@ const PresentationPage = observer(() => {
         joinRoom();
     }, [params.id]);
 
-    function handleKeyPress(event) {
-        if (event.key === 'Delete') {
-            setSlides(prev => {
-                setCurrentSlide(current => {
-                    if (current !== -1 && current >= 0 && current <= prev.length) {
-                        SlideAPI.DeleteSlide(params.id, prev[current].id);
-                    }
-                    return current;
-                })
-                return prev;
-            })
-        }
-    }
-
     useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (event.key === 'Delete') {
+                setSlides(prev => {
+                    setCurrentSlide(current => {
+                        if (current !== -1 && current >= 0 && current <= prev.length) {
+                            SlideAPI.DeleteSlide(params.id, prev[current].id);
+                        }
+                        return current;
+                    })
+                    return prev;
+                })
+            }
+        }
+
         window.addEventListener('keydown', handleKeyPress);
         
         return () => {
@@ -127,13 +188,16 @@ const PresentationPage = observer(() => {
             <div className={styles.wrapper}>
                 <title>Itransition Task 6</title>
                 <Header 
+                    headerRef={headerRef}
                     key={presentation.connectedUsers?.length ?? "0"}
                     name={presentation.name}
                     currentTool={currentTool}
                     setTool={setTool}
+                    isToolBarOpen={isToolBarOpen}
                     users={presentation.connectedUsers}
+                    setTextStyles={setTextStyles}
                 />
-                <div className={styles.content}>
+                <div className={styles.content} id={isToolBarOpen ? "open" : null}>
                     <div className={styles.left}>
                         <div className={styles.slides}>
                             {slides
@@ -156,9 +220,14 @@ const PresentationPage = observer(() => {
                     <div className={styles.right}>
                         <div className={styles.editor}>
                             {slides.length > 0 && 
-                                <Sheet 
+                                <Sheet
+                                    key={slides}
                                     currentTool={currentTool}
                                     setTool={setTool}
+                                    slide={slides[currentSlide]}
+                                    headerRef={headerRef}
+                                    setToolbarOpenState={setToolbarOpenState}
+                                    textStyles={textStyles}
                                 />
                             }
                         </div>

@@ -1,3 +1,55 @@
+.headerWrapper {
+    display: flex;
+    flex-direction: column;
+    transition: 0.4s ease;
+}
+
+.toolBar {
+    height: 0px;
+    width: calc(100% - 10px);
+    background: var(--main-blue-color);
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: hidden;
+    transition: 0.4s ease;
+    justify-content: space-between;
+}
+
+.toolBar[id="open"] {
+    height: 50px;
+}
+
+.toolBar select {
+    height: fit-content;
+    padding: 5px;
+    outline: none;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'Open Sans', sans-serif;
+    border-radius: 5px;
+}
+
+.toolBar select:nth-child(1) { border-radius: 5px 0px 0px 5px; }
+.toolBar select:nth-child(2) { 
+    border-radius: 0px 5px 5px 0px;
+    background: none;
+    outline: 2px solid white; 
+    outline-offset: -2px;
+    color: white;
+}
+
+.toolBar option {
+    padding: 5px;
+    outline: none;
+    border: none;
+    color: black;
+    border-radius: none;
+}
+
 .header {
     height: 50px;
     width: 100%;
@@ -5,7 +57,12 @@
     align-items: center;
     justify-content: space-between;
     background: var(--main-accent-color);
+    transition: 0.4s ease;
     border-bottom: 1px solid var(--main-border-color);
+}
+
+.header[id="open"] {
+    border-bottom: 0px solid transparent;
 }
 
 .header input {
@@ -14,8 +71,8 @@
     outline: none;
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
-    font-weight: 500;
-    color: var(--main-paragraph-color);
+    font-weight: 600;
+    color: var(--main-font-color);
 }
 
 .navigation {
@@ -25,4 +82,34 @@
 
 .users {
     margin-right: 10px;
+}
+
+.button img {
+    height: 20px;
+    width: 20px;
+    filter: invert(100%);
+}
+
+.button {
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.button[id="active"] {
+    background: white;
+}
+
+.button[id="active"] img {
+    filter: invert(0%);
+}
+
+.items {
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
