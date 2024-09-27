@@ -21,15 +21,40 @@ const PresentationPage = observer(() => {
     const headerRef = useRef();
 
     const [textStyles, setTextStyles] = useState({
-        textAlign: 'center',
-        textDecoration: 'underline',
-        fontWeight: 'bold',
-        fontStyle: 'italic',
-        fontFamily: 'Open Sans',
-        fontSize: '10%'
+        textAlign: 'left',
+        textDecoration: 'none',
+        fontWeight: '400',
+        fontStyle: 'normal',
+        fontFamily: 'Tahoma',
+        fontSize: '24px'
     });
     
     let params = useParams();
+
+    signalrContext.useSignalREffect(
+        "ChangePermissions",
+        (data) => {
+            const { id, user, permission } = JSON.parse(data);
+
+            if (id === presentation.id) {
+                setPresentation(prev => {
+                    let permissionModel = prev.permissions.find(e => e.username === user);
+
+                    if (permissionModel) {
+                        permissionModel.permission = permission;
+                    } else {
+                        prev.permissions = [...prev.permissions, {
+                            username: user,
+                            presentationId: id,
+                            permission: permission
+                        }];
+                    }
+    
+                    return prev;
+                });
+            }
+        }
+    );
 
     signalrContext.useSignalREffect(
         "JoinedPresentation",
@@ -121,6 +146,19 @@ const PresentationPage = observer(() => {
     );    
 
     signalrContext.useSignalREffect(
+        "ChangeName",
+        (data) => {
+            const {id, name} = JSON.parse(data);
+
+            if (id === presentation.id) {
+                setPresentation(prev => {
+                    return { ...prev, name: name };
+                });
+            }
+        }
+    ); 
+
+    signalrContext.useSignalREffect(
         "DeleteSlide",
         (data) => {
             if (!data) return;
@@ -166,7 +204,7 @@ const PresentationPage = observer(() => {
             if (event.key === 'Delete') {
                 setSlides(prev => {
                     setCurrentSlide(current => {
-                        if (current !== -1 && current >= 0 && current <= prev.length) {
+                        if (current !== -1 && current >= 0 && current < prev.length && prev[current].id) {
                             SlideAPI.DeleteSlide(params.id, prev[current].id);
                         }
                         return current;
@@ -186,16 +224,18 @@ const PresentationPage = observer(() => {
     return (
         <signalrContext.Provider url={'http://localhost:5000/user-hub'}>
             <div className={styles.wrapper}>
-                <title>Itransition Task 6</title>
+                <title>Itransition — Presentation Editor</title>
                 <Header 
                     headerRef={headerRef}
-                    key={presentation.connectedUsers?.length ?? "0"}
-                    name={presentation.name}
+                    key={presentation.connectedUsers?.length + presentation ?? "0"}
+                    nameValue={presentation.name}
                     currentTool={currentTool}
                     setTool={setTool}
                     isToolBarOpen={isToolBarOpen}
                     users={presentation.connectedUsers}
+                    presentation={presentation}
                     setTextStyles={setTextStyles}
+                    textStyles={textStyles}
                 />
                 <div className={styles.content} id={isToolBarOpen ? "open" : null}>
                     <div className={styles.left}>
@@ -209,6 +249,7 @@ const PresentationPage = observer(() => {
                                             number={slide.index + 1} 
                                             onClick={() => setCurrentSlide(index)}
                                             isCurrent={currentSlide === index} 
+                                            slide={slide}
                                         />
                                     )
                             })}
@@ -228,6 +269,7 @@ const PresentationPage = observer(() => {
                                     headerRef={headerRef}
                                     setToolbarOpenState={setToolbarOpenState}
                                     textStyles={textStyles}
+                                    setAdditionalStyles={setTextStyles}
                                 />
                             }
                         </div>

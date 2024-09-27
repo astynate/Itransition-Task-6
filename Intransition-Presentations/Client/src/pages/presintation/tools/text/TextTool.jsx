@@ -9,7 +9,10 @@ const TextTool = ({
         defaultText, 
         setToolbarOpenState, 
         headerRef,
-        additionalStyles
+        additionalStyles,
+        setAdditionalStyles=()=>{},
+        sheetRef,
+        isCanBeEditable = true
     }) => {
     
     const [text, setText] = useState(defaultText);
@@ -19,14 +22,62 @@ const TextTool = ({
     const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
     const [IsEditable, setEditableState] = useState(false);
     const [isActive, setActiveState] = useState(false);
+    const [copiedProperties, setCopiesProperties] = useState(properties);
     const ref = useRef();
     let params = useParams();
 
+    const handleResize = () => {
+        if (sheetRef.current) {
+            const { width, height } = sheetRef.current.getBoundingClientRect();
+
+            const scaleX = Math.round((width / properties.sheetWidth) * 1000) / 1000;
+            const scaleY = Math.round((height / properties.sheetHeight) * 1000) / 1000;
+
+            const translateX = `translateX(${(copiedProperties.left * scaleX) - copiedProperties.left}px)`;
+            const translateY = `translateY(${(copiedProperties.top * scaleY) - copiedProperties.top}px)`;
+
+            setCopiesProperties({ 
+                ...properties,
+                fontSize: `${parseInt(parseInt(properties.fontSize.split('px')[0]) * scaleX)}px`,
+                transform: `${isActive ? null : translateX} ${isActive ? null :translateY}`,
+                sheetHeight: Math.floor(height),
+                sheetWidth: Math.floor(width)
+            });
+        }
+    }
+
     useEffect(() => {
-        setToolbarOpenState(isActive);
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [properties]);
+
+    useEffect(() => {
+        handleResize();
+    }, [properties]);
+
+    useEffect(() => {
+        if (isCanBeEditable === true) { 
+            setToolbarOpenState(isActive);
+
+            if (isActive === true) {
+                setAdditionalStyles({
+                    textAlign: properties.textAlign,
+                    textDecoration: properties.textDecoration,
+                    fontWeight: properties.fontWeight,
+                    fontStyle: properties.fontStyle,
+                    fontFamily: properties.fontFamily,
+                    fontSize: copiedProperties.fontSize
+                });
+            }
+        }
     }, [isActive]);
 
     const handleMouseDown = (e, coefficientX, coefficientY, isFreezedX, isFreezedY) => {
+        if (isCanBeEditable === false) { return; }
+
         e.preventDefault();
 
         const startX = e.clientX;
@@ -57,7 +108,7 @@ const TextTool = ({
     };
 
     const handleDragStart = (e) => {
-        if (IsEditable) { return; }
+        if (IsEditable || isCanBeEditable === false) { return; }
 
         setIsDragging(true);
         setStartPosition({ x: e.clientX - properties.left, y: e.clientY - properties.top });
@@ -66,7 +117,7 @@ const TextTool = ({
     };
 
     const handleDragMove = (e) => {
-        if (isDragging) {
+        if (isDragging && isCanBeEditable === true) {
             setProperties({
                 ...properties,
                 left: e.clientX - startPosition.x,
@@ -76,19 +127,21 @@ const TextTool = ({
     };
 
     const handleDragEnd = () => {
+        if (isCanBeEditable === false) { return; }
         setIsDragging(false);
     };
 
     const handleInput = (event) => {
+        if (isCanBeEditable === false) { return; }
         setText(event.target.innerText);
     };
 
     useEffect(() => {
-        console.log(additionalStyles);
-    }, [additionalStyles]);
-
-    useEffect(() => {
         const listener = (event) => {
+            if (isCanBeEditable === false) { 
+                return; 
+            }
+
             if (!ref.current || ref.current.contains(event.target)) {
                 return;
             }
@@ -103,6 +156,7 @@ const TextTool = ({
 
                 SlideAPI.AddTextOrUpdate(
                     {
+                        ...copiedProperties,
                         presentationId: params.id,
                         slideId: "00000000-0000-0000-0000-000000000000", 
                         text: text, 
@@ -127,6 +181,10 @@ const TextTool = ({
 
     useEffect(() => {
         const listener = (event) => {
+            if (isCanBeEditable === false) { 
+                return; 
+            }
+
             setEditableState(editable => {
                 setActiveState(prev => {
                     if (event.key === 'Backspace' && prev && editable === false) {
@@ -147,15 +205,32 @@ const TextTool = ({
         };
     }, []);
 
+    useEffect(() => {
+        if (isActive === true && isCanBeEditable === true) {
+            setProperties(prev => {
+                return {
+                    ...prev,
+                    textAlign: additionalStyles.textAlign,
+                    textDecoration: additionalStyles.textDecoration,
+                    fontWeight: additionalStyles.fontWeight,
+                    fontStyle: additionalStyles.fontStyle,
+                    fontFamily: additionalStyles.fontFamily,
+                    fontSize: additionalStyles.fontSize
+                }
+            });
+        }
+    }, [isActive, additionalStyles]);
+
     return (
         <div 
+            key={properties}
             className={styles.textField} 
-            style={properties}
+            style={copiedProperties}
             onMouseDown={handleDragStart}
             onMouseMove={handleDragMove}
             onMouseLeave={handleDragEnd}
             onMouseUp={handleDragEnd}
-            onClick={() => setActiveState(true)}
+            onClick={() => setActiveState(isCanBeEditable)}
             state={isActive ? "active" : null}
             ref={ref}
         >

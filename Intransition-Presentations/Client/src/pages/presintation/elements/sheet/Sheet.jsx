@@ -1,10 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import TextTool from '../../tools/text/TextTool';
 import styles from './main.module.css';
 import SlideAPI from '../../api/SlideAPI';
 import { useParams } from 'react-router-dom';
 
-const Sheet = ({currentTool, setTool, slide={}, setToolbarOpenState, headerRef, textStyles={}}) => {
+const Sheet = ({
+        currentTool, 
+        setTool, 
+        slide={}, 
+        setToolbarOpenState, 
+        headerRef, 
+        textStyles={}, 
+        setAdditionalStyles,
+        isEditable = true
+    }) => {
+
     const ref = useRef();
     let params = useParams();
 
@@ -19,6 +29,8 @@ const Sheet = ({currentTool, setTool, slide={}, setToolbarOpenState, headerRef, 
             width: 100,
             top: Math.floor(event.clientY - sheetRect.top),
             left: Math.floor(event.clientX - sheetRect.left),
+            sheetHeight: Math.floor(sheetRect.height),
+            sheetWidth: Math.floor(sheetRect.width),
             ...textStyles
         });
     }
@@ -26,8 +38,10 @@ const Sheet = ({currentTool, setTool, slide={}, setToolbarOpenState, headerRef, 
     const handlers = [() => {}, () => {}, TextToolHandler]
 
     const ClickHandler = (event) => {
-        handlers[currentTool](event);
-        setTool(0);
+        if (isEditable) {
+            handlers[currentTool](event);
+            setTool(0);
+        }
     }
 
     return (
@@ -42,23 +56,24 @@ const Sheet = ({currentTool, setTool, slide={}, setToolbarOpenState, headerRef, 
                             element.height + 
                             element.width + 
                             element.top + 
-                            element.left
+                            element.left + 
+                            element.fontFamily + 
+                            element.fontSize +
+                            element.fontStyle +
+                            element.fontWeight + 
+                            element.textAlign +
+                            element.textDecoration +
+                            element.sheetHeight +
+                            element.sheetWidth
                         }
-                        propertiesValue={{ 
-                            width: element.width, 
-                            height: element.height, 
-                            top: element.top, 
-                            left: element.left,
-                            fontSize: element.fontSize,
-                            fontStyle: element.fontStyle,
-                            fontWeight: element.fontWeight,
-                            textAlign: element.textAlign,
-                            textDecoration: element.textDecoration,
-                        }}
+                        propertiesValue={element}
                         additionalStyles={textStyles}
                         defaultText={element.text}
                         setToolbarOpenState={setToolbarOpenState}
                         headerRef={headerRef}
+                        setAdditionalStyles={setAdditionalStyles}
+                        sheetRef={ref}
+                        isCanBeEditable={isEditable}
                     />
                 )
             })}

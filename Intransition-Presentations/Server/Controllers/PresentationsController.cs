@@ -1,6 +1,7 @@
 ﻿using Instend.Server.Database.Abstraction;
 using Itransition.Server.Hubs;
 using Itrantion.Server.Database.Abstraction;
+using Itrantion.Server.Models;
 using Itrantion.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -27,6 +28,41 @@ namespace Itrantion.Server.Controllers
             _presentationsRepository = presentationsRepository;
             _slidesRepository = slidesRepository;
             _userHub = userHub;
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeName([FromForm] Guid id, [FromForm] string username, [FromForm] string name)
+        {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
+                return BadRequest("Invalid data");
+
+            await _presentationsRepository.ChangeName(id, name);
+            await _userHub.Clients.Group(id.ToString()).SendAsync("ChangeName", SerializationHelper.SerializeWithCamelCase(new { id, name }));
+
+            return Ok();
+        }
+
+        public class ChangePermissionRequestBody
+        {
+            public Guid id { get; set; }
+            public string username { get; set; } = string.Empty;
+            public string user { get; set; } = string.Empty;
+            public Permissions permission { get; set; }
+        }
+
+        [HttpPut]
+        [Route("/api/presentation/permissions")]
+        public async Task<IActionResult> ChangePermissions([FromForm] ChangePermissionRequestBody body)
+        {
+            if (string.IsNullOrEmpty(body.username) || string.IsNullOrWhiteSpace(body.username))
+                return BadRequest("Invalid data");
+
+            await _presentationsRepository.EditPermissions(body.id, body.user, body.permission);
+
+            await _userHub.Clients.Group(body.id.ToString()).SendAsync("ChangePermissions", 
+                SerializationHelper.SerializeWithCamelCase(new { body.id, body.user, permission = body.permission.ToString() }));
+
+            return Ok();
         }
 
         [HttpGet]

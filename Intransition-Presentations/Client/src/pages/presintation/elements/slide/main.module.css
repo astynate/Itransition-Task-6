@@ -27,6 +27,6 @@
     outline: 4px solid var(--main-blue-color);
 }
 
-.slideWrapper[state="current"] {
+.slideWrapper[state="current"] .number {
     color: var(--main-blue-color);
 }

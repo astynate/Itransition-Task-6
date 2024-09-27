@@ -24,7 +24,7 @@ namespace Instend.Server.Database.Realization
 
             var permission = await _context.Permissions
                 .FirstOrDefaultAsync(x =>
-                    x.User == username &&
+                    x.Username == username &&
                     x.Id == presentationId &&
                     x.Permission == Permissions.ReadAndEdit.ToString());
 
@@ -93,6 +93,14 @@ namespace Instend.Server.Database.Realization
                 .Where(x => x.Id == model.Id)
                 .ExecuteUpdateAsync(x => x
                     .SetProperty(x => x.Text, model.Text)
+                    .SetProperty(x => x.FontFamily, model.FontFamily)
+                    .SetProperty(x => x.FontSize, model.FontSize)
+                    .SetProperty(x => x.FontStyle, model.FontStyle)
+                    .SetProperty(x => x.FontWeight, model.FontWeight)
+                    .SetProperty(x => x.TextAlign, model.TextAlign)
+                    .SetProperty(x => x.SheetHeight, model.SheetHeight)
+                    .SetProperty(x => x.SheetWidth, model.SheetWidth)
+                    .SetProperty(x => x.TextDecoration, model.TextDecoration)
                     .SetProperty(x => x.Top, model.Top)
                     .SetProperty(x => x.Left, model.Left)
                     .SetProperty(x => x.Height, model.Height)

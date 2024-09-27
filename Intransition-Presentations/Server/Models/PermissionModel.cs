@@ -7,7 +7,7 @@ namespace Itrantion.Server.Models
     public class PermissionModel
     {
         [Column("id")][Key] public Guid Id { get; set; } = Guid.NewGuid();
-        [Column("username")] public string User { get; set; } = string.Empty;
+        [Column("username")] public string Username { get; set; } = string.Empty;
         [Column("presentation_id")] public Guid PresentationId { get; set; }
         [Column("permission")] public string Permission { get; set; } = Permissions.ReadAndEdit.ToString();
     }

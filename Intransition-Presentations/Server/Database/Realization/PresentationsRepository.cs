@@ -18,6 +18,45 @@ namespace Itrantion.Server.Database.Realization
 
         public async Task<PresentationModel[]> GetAll() => await _context.Presentations.ToArrayAsync();
 
+        public async Task ChangeName(Guid id, string name)
+        {
+            await _context.Presentations
+                .Where(x => x.Id == id)
+                .ExecuteUpdateAsync(x => x
+                    .SetProperty(p => p.Name, name));
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task EditPermissions(Guid id, string username, Permissions permission)
+        {
+            var permissionModel = await _context.Permissions
+                .FirstOrDefaultAsync(x => x.Username == username && x.PresentationId == id);
+
+            if (permissionModel != null && permissionModel.Permission == permission.ToString()) 
+            {
+                return;
+            }
+
+            if (permissionModel != null)
+            {
+                permissionModel.Permission = permission.ToString();
+
+                _context.Entry(permissionModel).State = EntityState.Modified;    
+                await _context.SaveChangesAsync(); return;
+            }
+
+            var newPermission = new PermissionModel()
+            {
+                PresentationId = id,
+                Username = username,
+                Permission = permission.ToString()
+            };
+
+            await _context.AddAsync(newPermission);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<UserModel?> RegisterNewConnection(string username, string connectionId, Guid presentationId)
         {
             var user = await _userRepository.Login(username, 0);
@@ -87,6 +126,10 @@ namespace Itrantion.Server.Database.Realization
             if (result == null)
                 return new PresentationResult();
 
+            result.Presentation.permissions = await _context.Permissions
+                .Where(x => x.PresentationId == result.Presentation.Id)
+                .ToListAsync();
+
             result.Presentation.connectedUsers = await _context.Connections
                     .Where(x => x.Presentation == id)
                     .Join(_context.Users,
@@ -106,7 +149,7 @@ namespace Itrantion.Server.Database.Realization
             var searchUserResult = await _context.Users.FirstOrDefaultAsync(x => x.Username == nickname);
 
             if (searchUserResult == null)
-                return ("User not found", null);
+                return ("Username not found", null);
 
             var presentation = PresentationModel.Create(name, nickname, DateTime.Now);
 

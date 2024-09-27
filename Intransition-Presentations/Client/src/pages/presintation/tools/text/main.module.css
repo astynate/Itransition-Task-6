@@ -23,6 +23,7 @@
     font-family: 'Open Sans', sans-serif;
     cursor: move;
     user-select: none;
+    font-family: inherit;
 }
 
 .textField span[state="edit"] {

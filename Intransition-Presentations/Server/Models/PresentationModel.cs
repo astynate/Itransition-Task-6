@@ -13,6 +13,8 @@ namespace Itrantion.Server.Models
 
         [NotMapped] public List<UserModel> connectedUsers = [];
 
+        [NotMapped] public List<PermissionModel> permissions = [];
+
         private PresentationModel() { }
 
         public static (string? error, PresentationModel? instance) Create(string name, string owner, DateTime date)

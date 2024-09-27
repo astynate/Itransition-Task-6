@@ -9,9 +9,49 @@ import textAlignLeft from './images/text-align-left.png';
 import textAlignRight from './images/text-align-right.png';
 import bold from './images/bold.png';
 import italics from './images/italics.png';
-import underlined from './images/text-align-right.png';
+import underlined from './images/underline.png';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-const Header = ({name, users = [], currentTool, setTool, isToolBarOpen, headerRef, setTextStyles}) => { 
+const Header = ({nameValue, presentation, users = [], currentTool, setTool, isToolBarOpen, headerRef, textStyles, setTextStyles}) => { 
+    const [name, setName] = useState(nameValue);
+    const [timer, setTimer] = useState(null);
+    let params = useParams();
+  
+    const handleChange = (e) => {
+      setName(e.target.value);
+      
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      const newTimer = setTimeout(() => {
+        if (name.length > 0) {
+            setName(prev => {
+                let form = new FormData();
+
+                form.append('name', prev);
+                form.append('id', params.id);
+                form.append('username', localStorage.getItem('username'));
+
+                ChangeNameRequest(form);
+                return prev;
+            })
+        } else {
+            setName(nameValue);
+        }
+      }, 500);
+      
+      setTimer(newTimer);
+    };
+
+    const ChangeNameRequest = async (form) => {
+        await fetch('/api/presentations', {
+            method: "PUT",
+            body: form
+        });
+    }
+    
     const handleFontFamilyChange = (e) => {
         setTextStyles(prevStyles => ({ ...prevStyles, fontFamily: e.target.value }));
     };
@@ -25,7 +65,7 @@ const Header = ({name, users = [], currentTool, setTool, isToolBarOpen, headerRe
     };
 
     const handleTextStyleChange = (style) => {
-        setTextStyles(prevStyles => ({ ...prevStyles, [style]: !prevStyles[style] }));
+        setTextStyles(prevStyles => ({ ...prevStyles, ...style }));
     };
 
     return (
@@ -46,48 +86,93 @@ const Header = ({name, users = [], currentTool, setTool, isToolBarOpen, headerRe
                         onClick={() => setTool(2)} 
                     />
                 </div>
-                <div className={styles.name}>
-                    <input key={name} defaultValue={name ?? "Loading..."} />
-                </div>
+                <input 
+                    key={nameValue} 
+                    defaultValue={nameValue ?? "Loading..."} 
+                    maxLength={40} 
+                    onInput={handleChange}
+                />
                 <div className={styles.users}>
-                    <Users users={users} />
+                    <Users key={presentation} users={users} presentation={presentation} />
                 </div>
             </div>
             <div className={styles.toolBar} id={isToolBarOpen ? "open" : null}>
                 <div className={styles.items}>
-                    <select onChange={handleFontFamilyChange}>
-                        <option>Open-Sans</option>
-                        <option>Helvetica</option>
+                    <select value={textStyles.fontFamily} onChange={handleFontFamilyChange}>
+                        <option>Tahoma</option>
+                        <option>Verdana</option>
                         <option>Times New Roman</option>
+                        <option>Georgia</option>
+                        <option>Courier New</option>
+                        <option>Brush Script MT</option>
                     </select>
-                    <select onChange={handleFontSizeChange}>
-                        <option>10%</option>
-                        <option>20%</option>
-                        <option>30%</option>
-                        <option>40%</option>
-                        <option>50%</option>
-                        <option>60%</option>
+                    <select value={textStyles.fontSize} onChange={handleFontSizeChange}>
+                        <option>16px</option>
+                        <option>24px</option>
+                        <option>28px</option>
+                        <option>32px</option>
+                        <option>38px</option>
+                        <option>62px</option>
                     </select>
                 </div>
                 <div className={styles.items}>
-                    <div className={styles.button} id='active' type="radio" onClick={() => handleTextAlignChange('left')}>
+                    <div 
+                        className={styles.button} 
+                        id={textStyles.textAlign === 'left' ? 'active' : null}
+                        type="radio" 
+                        onClick={() => handleTextAlignChange('left')}
+                    >
                         <img src={textAlignLeft} />
                     </div>
-                    <div className={styles.button} type="radio" onClick={() => handleTextAlignChange('center')}>
+                    <div 
+                        className={styles.button} 
+                        type="radio" 
+                        id={textStyles.textAlign === 'center' ? 'active' : null}
+                        onClick={() => handleTextAlignChange('center')}
+                    >
                         <img src={textAlignCenter} />
                     </div>
-                    <div className={styles.button} type="radio" onClick={() => handleTextAlignChange('right')}>
+                    <div 
+                        className={styles.button} 
+                        type="radio"
+                        id={textStyles.textAlign === 'right' ? 'active' : null}
+                        onClick={() => handleTextAlignChange('right')}
+                    >
                         <img src={textAlignRight} />
                     </div>
                 </div>
                 <div className={styles.items}>
-                    <div className={styles.button} id='active' type="checkbox" onClick={() => handleTextStyleChange('fontWeight')}>
+                    <div 
+                        className={styles.button} 
+                        id={textStyles.fontWeight === '700' ? 'active' : null}
+                        type="checkbox"
+                        onClick={() => {
+                            const style = textStyles.fontWeight === '700' ? '400' : '700';
+                            handleTextStyleChange({fontWeight: style});
+                        }}
+                    >
                         <img src={bold} />
                     </div>
-                    <div className={styles.button} type="checkbox" onClick={() => handleTextStyleChange('fontStyle')}>
+                    <div 
+                        className={styles.button} 
+                        id={textStyles.fontStyle === 'italic' ? 'active' : ''}
+                        type="checkbox" 
+                        onClick={() => {
+                            const style = textStyles.fontStyle === 'italic' ? 'normal' : 'italic';
+                            handleTextStyleChange({ fontStyle: style });
+                        }}
+                    >
                         <img src={italics} />
                     </div>
-                    <div className={styles.button} type="checkbox" onClick={() => handleTextStyleChange('textDecoration')}>
+                    <div 
+                        className={styles.button} 
+                        id={textStyles.textDecoration === 'underline' ? 'active' : null}
+                        type="checkbox" 
+                        onClick={() => {
+                            const style = textStyles.textDecoration === 'underline' ? 'none' : 'underline';
+                            handleTextStyleChange({textDecoration: style});
+                        }}
+                    >
                         <img src={underlined} />
                     </div>
                 </div>
