@@ -9,6 +9,7 @@ import add from './images/add.svg';
 import { observer } from 'mobx-react-lite';
 import userState from '../../../state/userState';
 import SlideAPI from '../api/SlideAPI';
+import { IsUserHasEditPermission } from '../../home/features/users/Users';
 
 export const signalrContext = createSignalRContext();
 
@@ -18,6 +19,7 @@ const PresentationPage = observer(() => {
     const [currentSlide, setCurrentSlide] = useState(-1);
     const [currentTool, setTool] = useState(0);
     const [isToolBarOpen, setToolbarOpenState] = useState(false);
+    const [isUserHasEditPermission, SetEditPerission] = useState(false);
     const headerRef = useRef();
 
     const [textStyles, setTextStyles] = useState({
@@ -30,6 +32,14 @@ const PresentationPage = observer(() => {
     });
     
     let params = useParams();
+
+    useEffect(() => {
+        SetEditPerission(
+            IsUserHasEditPermission(presentation, { 
+                username: localStorage.getItem('username') 
+            })
+        );
+    }, [presentation]);
 
     signalrContext.useSignalREffect(
         "ChangePermissions",
@@ -50,7 +60,7 @@ const PresentationPage = observer(() => {
                         }];
                     }
     
-                    return prev;
+                    return { ...prev };
                 });
             }
         }
@@ -250,6 +260,7 @@ const PresentationPage = observer(() => {
                                             onClick={() => setCurrentSlide(index)}
                                             isCurrent={currentSlide === index} 
                                             slide={slide}
+                                            type={presentation.type}
                                         />
                                     )
                             })}
@@ -270,6 +281,8 @@ const PresentationPage = observer(() => {
                                     setToolbarOpenState={setToolbarOpenState}
                                     textStyles={textStyles}
                                     setAdditionalStyles={setTextStyles}
+                                    isEditable={isUserHasEditPermission}
+                                    type={presentation.type}
                                 />
                             }
                         </div>

@@ -19,7 +19,6 @@ const HomePage = () => {
                 })
                 .then(response => {
                     setPresentations(response);
-                    console.log(presentations);
                 });
         }
 

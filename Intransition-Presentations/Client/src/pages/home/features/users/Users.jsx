@@ -4,23 +4,27 @@ import Avatar from '../../elemets/avatar/Avatar';
 import styles from './main.module.css';
 import { useParams } from 'react-router-dom';
 
+export const IsUserHasEditPermission = (presentation, user) => {
+    if (presentation.owner === user.username) {
+        return true;
+    }
+
+    if (presentation.permissions && presentation.permissions.includes) {
+        return presentation.permissions
+            .filter(e => e.permission === 'ReadAndEdit')
+            .map(e => e.username)
+            .includes(user.username);
+    }
+
+    return false;
+}
+
 const Users = ({users = [], presentation}) => {
     const [isOpen, setOpenState] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]); 
 
     let ref = useRef();
     let params = useParams();
-
-    const GetUserState = (user) => {
-        if (presentation.permissions && presentation.permissions.includes) {
-            return presentation.permissions
-                .filter(e => e.permission === 'ReadAndEdit')
-                .map(e => e.username)
-                .includes(user.username) ? "Editor" : "Visitor";
-        }
-
-        return "Visitor";
-    }
 
     const HandlePermissionChange = async (value, index) => {
         let form = new FormData();
@@ -39,12 +43,10 @@ const Users = ({users = [], presentation}) => {
     useEffect(() => {
         setUserPermissions(prev => {
             for (let i = 0; i < users.length; i++) {
-                prev[i] = GetUserState(users[i]);
+                prev[i] = IsUserHasEditPermission(presentation, users[i]);
             }
-            return prev;
+            return { ...prev };
         });
-
-        console.log(userPermissions);
     }, [users, presentation, presentation.permissions]);
 
     useEffect(() => {
@@ -89,14 +91,14 @@ const Users = ({users = [], presentation}) => {
                                 :
                                     presentation.owner === userState.username ?
                                         <select 
-                                            value={userPermissions[index]} 
+                                            value={userPermissions[index] ? "Editor" : "Visitor"} 
                                             onChange={(event) => HandlePermissionChange(event.target.value, index)}
                                         >
                                             <option>Visitor</option>
                                             <option>Editor</option>
                                         </select>
                                     :
-                                        <span>{userPermissions[index]}</span>
+                                        <span>{userPermissions[index] ? "Editor" : "Visitor"}</span>
                                 }
                             </div>
                         </div>

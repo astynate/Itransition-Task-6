@@ -8,7 +8,7 @@ import template_3 from './images/template_3.png';
 import userState from '../../../../state/userState';
 
 const Create = ({setPresentations}) => {
-    const CreatePresentation = async () => {
+    const CreatePresentation = async (type) => {
         if (userState.username == null) {
             alert("Please login your account!");
             return;
@@ -17,6 +17,7 @@ const Create = ({setPresentations}) => {
         let form = new FormData();
 
         form.append('username', userState.username);
+        form.append('type', type);
 
         await fetch('/api/presentations', {
             method: "POST",
@@ -36,19 +37,22 @@ const Create = ({setPresentations}) => {
             <Wrapper>
                 <List>
                     <PresentationTemplate 
-                        onClick={() => CreatePresentation()}
+                        onClick={() => CreatePresentation(0)}
                     />
                     <PresentationTemplate 
                         image={template_1}
                         name='Simple white'
+                        onClick={() => CreatePresentation(1)}
                     />
                     <PresentationTemplate 
                         image={template_2}
                         name='Simple blue'
+                        onClick={() => CreatePresentation(2)}
                     />
                     <PresentationTemplate 
                         image={template_3}
                         name='Simple black'
+                        onClick={() => CreatePresentation(3)}
                     />
                 </List>
             </Wrapper>

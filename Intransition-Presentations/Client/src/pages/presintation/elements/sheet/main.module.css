@@ -4,6 +4,17 @@
     height: auto;
     aspect-ratio: 16 / 9;
     background: white;
+    color: black;
+}
+
+.sheet[type='type-2'] {
+    background: rgb(31, 79, 255);
+    color: white;
+}
+
+.sheet[type='type-3'] {
+    background: rgb(0, 0, 0);
+    color: white;
 }
 
 .sheet[tool="tool-2"] {

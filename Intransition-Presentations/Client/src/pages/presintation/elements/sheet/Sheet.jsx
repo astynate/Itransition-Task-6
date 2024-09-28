@@ -12,7 +12,8 @@ const Sheet = ({
         headerRef, 
         textStyles={}, 
         setAdditionalStyles,
-        isEditable = true
+        isEditable = true,
+        type = 0
     }) => {
 
     const ref = useRef();
@@ -45,7 +46,7 @@ const Sheet = ({
     }
 
     return (
-        <div onClick={ClickHandler} ref={ref} className={styles.sheet} tool={`tool-${currentTool}`}>
+        <div onClick={ClickHandler} ref={ref} className={styles.sheet} type={`type-${type}`} tool={`tool-${currentTool}`}>
             {slide.texts && slide.texts.map(element => {
                 return (
                     <TextTool 

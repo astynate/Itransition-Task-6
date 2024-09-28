@@ -16,6 +16,7 @@ class SlideAPI {
 
         form.append('slideId', sliadeId);
         form.append('presentationId', presentationId);
+        form.append('username', localStorage.getItem('username'));
 
         await fetch('/api/presentations/slide', {
             method: "DELETE",

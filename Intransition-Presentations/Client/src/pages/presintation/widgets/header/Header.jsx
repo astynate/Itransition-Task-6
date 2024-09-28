@@ -11,11 +11,13 @@ import bold from './images/bold.png';
 import italics from './images/italics.png';
 import underlined from './images/underline.png';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Header = ({nameValue, presentation, users = [], currentTool, setTool, isToolBarOpen, headerRef, textStyles, setTextStyles}) => { 
     const [name, setName] = useState(nameValue);
     const [timer, setTimer] = useState(null);
+
+    let navigate = useNavigate();
     let params = useParams();
   
     const handleChange = (e) => {
@@ -74,6 +76,7 @@ const Header = ({nameValue, presentation, users = [], currentTool, setTool, isTo
                 <div className={styles.navigation}>
                     <Button 
                         image={logo} 
+                        onClick={() => navigate('/')}
                     />
                     <Button 
                         image={cursor} 
